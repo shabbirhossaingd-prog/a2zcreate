@@ -1,4 +1,10 @@
+const tools = [
+  { title: "Create Video", desc: "Script → scenes → voice → final video", href: "/create-video", icon: "▶" },
+  { title: "Create Poster", desc: "Brief + inspiration + product → poster", href: "/create-poster", icon: "✦" },
+  { title: "Brand Kit", desc: "Keep your identity ready for every creative", href: "/brand-kit", icon: "◈" },
+  { title: "Projects", desc: "Manage generated videos and designs", href: "/projects", icon: "□" },
+];
+
 export default function Dashboard(){
- const tools=['Create Video','Create Poster','Brand Kit','Projects'];
- return <main className="min-h-screen bg-black text-white p-10"><h1 className="text-4xl font-bold">AI Creative Dashboard</h1><div className="grid md:grid-cols-4 gap-5 mt-10">{tools.map(t=><div key={t} className="rounded-xl bg-zinc-900 border border-zinc-700 p-6">{t}</div>)}</div></main>
+ return <main className="a2z-shell min-h-screen text-white"><header className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6"><a href="/" className="text-lg font-bold">A2ZCreate<span className="text-violet-400">.</span></a><div className="flex gap-5 text-sm text-zinc-500"><a href="/brand-kit" className="hover:text-white">Brand Kit</a><a href="/projects" className="hover:text-white">Projects</a></div></header><section className="mx-auto max-w-7xl px-6 pb-20 pt-12"><div><p className="text-xs uppercase tracking-[.2em] text-violet-400">Workspace</p><h1 className="mt-3 text-4xl font-semibold tracking-tight">AI Creative Dashboard</h1><p className="mt-3 text-zinc-400">Choose what you want to create. Your brand context can be reused across every project.</p></div><div className="mt-10 grid gap-5 md:grid-cols-2">{tools.map(t=><a href={t.href} key={t.title} className="a2z-card group p-6 hover:border-white/20"><div className="flex items-start justify-between"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 text-lg">{t.icon}</span><span className="text-zinc-600 group-hover:text-white">↗</span></div><h2 className="mt-10 text-xl font-semibold">{t.title}</h2><p className="mt-2 text-sm leading-6 text-zinc-500">{t.desc}</p></a>)}</div><div className="a2z-card mt-5 p-6"><p className="text-xs uppercase tracking-[.18em] text-zinc-500">Suggested workflow</p><div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-zinc-400">{['Brand Kit','Brief','AI Generation','Review','Export'].map((x,i)=><span key={x} className="rounded-lg border border-white/8 bg-white/[.03] px-3 py-2">{i+1}. {x}</span>)}</div></div></section></main>
 }
