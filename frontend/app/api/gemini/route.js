@@ -31,7 +31,8 @@ export async function POST(request) {
       return NextResponse.json({ error: "GEMINI_API_KEY_ is not configured." }, { status: 503 });
     }
 
-    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+    const rawModel = process.env.GEMINI_MODEL || "gemini-3.6-flash";
+    const model = rawModel.replace(/^models\//, "");
 
     const prompt = `You are A2ZCreate's elite AI Video Director, cinematographer and production parser.
 
