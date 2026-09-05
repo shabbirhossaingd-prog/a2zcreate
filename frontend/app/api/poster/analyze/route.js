@@ -21,7 +21,8 @@ export async function POST(request) {
     addImage(productDataUrl, "PRODUCT IMAGE — preserve this product as the hero subject.");
     addImage(logoDataUrl, "LOGO — preserve this logo accurately.");
 
-    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+    const rawModel = process.env.GEMINI_MODEL || "gemini-3.6-flash";
+    const model = rawModel.replace(/^models\//, "");
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
