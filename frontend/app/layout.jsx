@@ -1,4 +1,5 @@
 import "./globals.css";
+import ThemeToggle from "./components/ThemeToggle";
 
 export const metadata = {
   title: "A2ZCreate AI Studio",
@@ -7,8 +8,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
+      <body>
+        {children}
+        <ThemeToggle />
+      </body>
     </html>
   );
 }
