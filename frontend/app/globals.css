@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+:root { color-scheme: dark; }
+* { box-sizing: border-box; }
+html { background: #050507; }
+body { margin: 0; min-height: 100vh; background: #050507; color: #f7f7f8; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+button, input, textarea, select { font: inherit; }
+button { cursor: pointer; }
+::selection { background: #ffffff; color: #050507; }
+
+.a2z-shell { min-height: 100vh; background: radial-gradient(circle at 50% -10%, rgba(124,58,237,.18), transparent 38%), #050507; }
+.a2z-grid { background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 48px 48px; }
+.a2z-card { border: 1px solid rgba(255,255,255,.09); background: rgba(17,17,20,.72); backdrop-filter: blur(18px); border-radius: 20px; }
+.a2z-input { width: 100%; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.045); color: #fff; border-radius: 12px; padding: 12px 14px; outline: none; transition: .2s; }
+.a2z-input:focus { border-color: rgba(255,255,255,.32); box-shadow: 0 0 0 3px rgba(255,255,255,.05); }
+.a2z-muted { color: #9b9ba5; }
+.a2z-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; padding: 11px 16px; font-weight: 650; transition: transform .2s, opacity .2s, background .2s; }
+.a2z-btn:hover { transform: translateY(-1px); }
+.a2z-btn-primary { background: #fff; color: #08080a; }
+.a2z-btn-secondary { border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.05); color: #fff; }
+.a2z-label { display:block; margin-bottom:8px; font-size:13px; font-weight:600; color:#d5d5dc; }
