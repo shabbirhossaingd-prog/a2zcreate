@@ -1,7 +1,7 @@
+"use client";
+import { useState } from "react";
+
 export default function BrandKit(){
- return <main className="p-8 space-y-6">
- <h1 className="text-3xl font-bold">Brand Kit</h1>
- <p>Save logo, colors, fonts, audience and company identity for AI generation.</p>
- <button className="bg-black text-white px-5 py-3 rounded">Create Brand Profile</button>
- </main>
+ const [saved,setSaved]=useState(false);
+ return <main className="a2z-shell min-h-screen text-white"><header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6"><a href="/" className="font-bold">A2ZCreate<span className="text-violet-400">.</span></a><a href="/dashboard" className="text-sm text-zinc-400">← Dashboard</a></header><section className="mx-auto max-w-6xl px-6 pb-20 pt-10"><p className="text-xs uppercase tracking-[.2em] text-violet-400">Brand memory</p><h1 className="mt-3 text-4xl font-semibold">Your brand, remembered.</h1><p className="mt-3 max-w-2xl text-zinc-400">Save the context the AI should follow whenever it creates a poster, video or social asset.</p><div className="a2z-card mt-10 p-6"><div className="grid gap-5 md:grid-cols-2"><div><label className="a2z-label">Company name</label><input className="a2z-input" placeholder="Your company" /></div><div><label className="a2z-label">Industry</label><input className="a2z-input" placeholder="Real estate, education, ecommerce..." /></div><div><label className="a2z-label">Target audience</label><textarea className="a2z-input min-h-28" placeholder="Who should this content speak to?" /></div><div><label className="a2z-label">Brand personality</label><textarea className="a2z-input min-h-28" placeholder="Professional, premium, friendly, bold..." /></div><div><label className="a2z-label">Logo</label><input className="a2z-input" type="file" accept="image/*" /></div><div><label className="a2z-label">Primary brand color</label><div className="flex gap-3"><input type="color" defaultValue="#7c3aed" className="h-12 w-16 rounded-lg border border-white/10 bg-transparent"/><input className="a2z-input" defaultValue="#7C3AED"/></div></div></div><button onClick={()=>setSaved(true)} className="a2z-btn a2z-btn-primary mt-7">{saved?'✓ Brand profile saved':'Save brand profile'}</button>{saved&&<p className="mt-3 text-sm text-emerald-300">Ready to reuse across future creatives.</p>}</div></section></main>
 }
