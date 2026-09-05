@@ -1,23 +1,67 @@
 import { NextResponse } from "next/server";
 
+export const runtime = "nodejs";
+
 export async function POST(request) {
   try {
-    const { text, voiceId } = await request.json();
-    if (!text?.trim()) return NextResponse.json({ error: "Voice text is required." }, { status: 400 });
-    if (!process.env.ELEVENLABS_API_KEY) return NextResponse.json({ error: "ELEVENLABS_API_KEY is not configured." }, { status: 503 });
+    const { text, voice = "Kore", style = "natural, confident commercial narration", language } = await request.json();
 
-    const id = voiceId || process.env.ELEVENLABS_VOICE_ID;
-    if (!id) return NextResponse.json({ error: "ELEVENLABS_VOICE_ID is not configured." }, { status: 503 });
-    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${id}`, {
-      method: "POST",
-      headers: { "xi-api-key": process.env.ELEVENLABS_API_KEY, "Content-Type": "application/json", Accept: "audio/mpeg" },
-      body: JSON.stringify({ text, model_id: process.env.ELEVENLABS_MODEL_ID || "eleven_multilingual_v2", voice_settings: { stability: 0.45, similarity_boost: 0.8 } })
-    });
-    if (!response.ok) {
-      const message = await response.text();
-      return NextResponse.json({ error: message || "ElevenLabs request failed." }, { status: response.status });
+    if (!text?.trim()) {
+      return NextResponse.json({ error: "Voice text is required." }, { status: 400 });
     }
-    return new Response(await response.arrayBuffer(), { status: 200, headers: { "Content-Type": "audio/mpeg", "Cache-Control": "no-store" } });
+
+    const apiKey = process.env.GEMINI_API_KEY_ || process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json({ error: "GEMINI_API_KEY_ is not configured." }, { status: 503 });
+    }
+
+    const model = process.env.GEMINI_TTS_MODEL || "gemini-3.1-flash-tts-preview";
+    const spokenPrompt = `Read the following text exactly as written. Voice direction: ${style}. Do not add, remove, translate, or explain any words.\n\n${text.trim()}`;
+    const speechConfig = language ? [{ voice, language }] : [{ voice }];
+
+    const response = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey,
+        "Api-Revision": "2026-05-20"
+      },
+      body: JSON.stringify({
+        model,
+        input: spokenPrompt,
+        response_format: {
+          type: "audio",
+          mime_type: "audio/wav",
+          delivery: "inline"
+        },
+        generation_config: {
+          speech_config: speechConfig
+        }
+      })
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      return NextResponse.json({ error: data?.error?.message || "Gemini voice request failed." }, { status: response.status });
+    }
+
+    const audio = data?.steps
+      ?.flatMap((step) => Array.isArray(step?.content) ? step.content : [])
+      ?.find((item) => item?.type === "audio" && item?.data);
+
+    if (!audio?.data) {
+      return NextResponse.json({ error: "Gemini did not return audio data." }, { status: 502 });
+    }
+
+    const audioBuffer = Buffer.from(audio.data, "base64");
+    return new Response(audioBuffer, {
+      status: 200,
+      headers: {
+        "Content-Type": audio.mime_type || "audio/wav",
+        "Cache-Control": "no-store",
+        "X-Voice-Provider": "gemini"
+      }
+    });
   } catch (error) {
     return NextResponse.json({ error: error.message || "Unexpected server error." }, { status: 500 });
   }
