@@ -14,14 +14,16 @@ export async function POST(request) {
   try {
     const {
       script,
+      mode = "advanced",
       context = {},
       referenceDataUrl,
+      productDataUrl,
       logoDataUrl,
       footerDataUrl,
     } = await request.json();
 
     if (!script?.trim()) {
-      return NextResponse.json({ error: "Script is required." }, { status: 400 });
+      return NextResponse.json({ error: "Script / storyboard is required." }, { status: 400 });
     }
 
     const apiKey = process.env.GEMINI_API_KEY_ || process.env.GEMINI_API_KEY;
@@ -30,37 +32,91 @@ export async function POST(request) {
     }
 
     const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-    const prompt = `You are the creative director for A2ZCreate. Convert the user's brief into a production-ready scene plan for a marketing video.
 
-Rules:
-- Split long videos into 5-10 second scenes.
-- Preserve explicit visual and voice instructions.
-- If a visual reference image is supplied, use it only for visual direction such as mood, lighting, framing, color, composition and pacing. Do not copy distinctive copyrighted artwork or exact composition.
-- If a brand logo is supplied, keep the logo unchanged and describe where it should appear. Do not redraw or alter the logo.
-- If a footer reference is supplied, treat it as the footer/end-card branding direction and keep text readable.
-- Respect footer text supplied in brand context.
-- Keep recurring subjects visually consistent across scenes.
-- Return ONLY valid JSON.
+    const prompt = `You are A2ZCreate's elite AI Video Director, cinematographer and production parser.
 
-Return this shape:
-{"scenes":[{"scene":1,"duration":8,"visual":"...","camera":"...","voice":"...","onScreenText":"...","logoUse":"...","footerUse":"..."}],"style":"...","referenceDirection":"...","brandDirection":"..."}
+The user may paste either a short video brief or a long, scene-by-scene storyboard containing headings such as VIDEO SPECIFICATIONS, SCENE 1, Visual AI Prompt, SFX, On-Screen Text, Voiceover, VO, timestamps and duration. Parse the brief accurately instead of rewriting away explicit instructions.
 
-Brand and production context: ${JSON.stringify(context)}
+MODE: ${mode}
 
-User brief:
+PRODUCTION RULES:
+- Respect explicit scene numbers, timestamps, durations, visual prompts, SFX, on-screen text and voiceover when supplied.
+- If timestamps are present, preserve them. If not, create a logical 5-10 second scene structure.
+- Keep the total duration as close as possible to the requested target duration.
+- Preserve Bengali text exactly when the user provides Bengali voiceover or on-screen copy.
+- Keep recurring people, products, clothing, locations and visual identity consistent across scenes.
+- Turn each visual into a generation-ready cinematic prompt suitable for an image/video generation engine.
+- Include camera framing/movement, lighting, environment, subject action, realism and continuity notes.
+- Do not claim a clip has been rendered; this endpoint produces the production plan only.
+- If a visual reference is supplied, use it only for mood, color, framing, lighting, editing rhythm and overall direction; do not duplicate distinctive artwork or exact composition.
+- If a product image is supplied, keep that product as the hero subject and do not invent a materially different product.
+- If a logo is supplied, preserve the logo unchanged. Never redraw or modify it. Follow logo placement policy from context.
+- If a footer/end-card reference is supplied, use it as layout/branding direction. Follow footer policy from context.
+- Keep CTA, website, phone, address and footer copy readable.
+- If subtitles are enabled, return subtitle text for every voiced scene.
+- Return ONLY valid JSON. No markdown fences.
+
+RETURN EXACTLY THIS JSON SHAPE:
+{
+  "project": {
+    "title": "...",
+    "targetDuration": 60,
+    "aspectRatio": "16:9",
+    "language": "Bengali",
+    "visualStyle": "...",
+    "musicMood": "...",
+    "voiceStyle": "..."
+  },
+  "scenes": [
+    {
+      "scene": 1,
+      "title": "...",
+      "start": "00:00",
+      "end": "00:08",
+      "duration": 8,
+      "visual": "generation-ready visual prompt",
+      "camera": "shot size + camera movement",
+      "continuity": "subject/product continuity notes",
+      "voice": "exact voiceover",
+      "onScreenText": "exact screen text",
+      "subtitle": "subtitle text",
+      "sfx": "sound effects",
+      "music": "music direction for this scene",
+      "logoUse": "logo placement instruction or none",
+      "footerUse": "footer/end-card instruction or none"
+    }
+  ],
+  "globalDirection": {
+    "referenceDirection": "...",
+    "brandDirection": "...",
+    "colorAndLighting": "...",
+    "editingRhythm": "...",
+    "audioArc": "...",
+    "renderNotes": "..."
+  }
+}
+
+PRODUCTION CONTEXT:
+${JSON.stringify(context)}
+
+USER SCRIPT / STORYBOARD:
 ${script}`;
 
     const parts = [{ text: prompt }];
-    addImagePart(parts, referenceDataUrl, "VISUAL REFERENCE IMAGE — analyze style, mood, framing and visual direction only.");
-    addImagePart(parts, logoDataUrl, "BRAND LOGO — preserve this logo accurately and specify appropriate placement in the video.");
-    addImagePart(parts, footerDataUrl, "FOOTER / END-CARD REFERENCE — use this as footer branding and layout direction while keeping text readable.");
+    addImagePart(parts, referenceDataUrl, "VISUAL REFERENCE — extract mood, framing, lighting, color and pacing only; create a new composition.");
+    addImagePart(parts, productDataUrl, "PRODUCT REFERENCE — preserve this exact product identity and appearance in relevant scenes.");
+    addImagePart(parts, logoDataUrl, "OFFICIAL BRAND LOGO — keep unchanged and use only according to the requested logo placement policy.");
+    addImagePart(parts, footerDataUrl, "FOOTER / END-CARD REFERENCE — use as branding/layout direction while keeping all text readable.");
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: [{ parts }] }),
+        body: JSON.stringify({
+          contents: [{ parts }],
+          generationConfig: { responseMimeType: "application/json" },
+        }),
       }
     );
 
@@ -76,7 +132,8 @@ ${script}`;
     const clean = text.replace(/^```json\s*/i, "").replace(/```$/i, "").trim();
 
     try {
-      return NextResponse.json(JSON.parse(clean));
+      const parsed = JSON.parse(clean);
+      return NextResponse.json(parsed);
     } catch {
       return NextResponse.json(
         { error: "Gemini returned invalid JSON.", raw: text },
