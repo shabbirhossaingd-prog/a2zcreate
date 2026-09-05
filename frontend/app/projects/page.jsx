@@ -1,6 +1,6 @@
-export default function Projects(){
- return <main className="p-8">
- <h1 className="text-3xl font-bold">Projects</h1>
- <p>Your generated videos, posters and creative assets will appear here.</p>
- </main>
-}
+const projects = [
+ {name:'Luxury Campaign', type:'Video', status:'Ready', meta:'60 sec · 5 scenes'},
+ {name:'Product Launch', type:'Poster', status:'Draft', meta:'1080 × 1350'},
+ {name:'Brand Intro', type:'Video', status:'Draft', meta:'30 sec · 3 scenes'},
+];
+export default function Projects(){return <main className="a2z-shell min-h-screen text-white"><header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6"><a href="/" className="font-bold">A2ZCreate<span className="text-violet-400">.</span></a><a href="/dashboard" className="text-sm text-zinc-400">← Dashboard</a></header><section className="mx-auto max-w-6xl px-6 pb-20 pt-10"><div className="flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="text-xs uppercase tracking-[.2em] text-violet-400">Library</p><h1 className="mt-3 text-4xl font-semibold">Projects</h1><p className="mt-3 text-zinc-400">Your videos, posters and creative assets in one place.</p></div><div className="flex gap-2"><a href="/create-video" className="a2z-btn a2z-btn-primary text-sm">+ Video</a><a href="/create-poster" className="a2z-btn a2z-btn-secondary text-sm">+ Poster</a></div></div><div className="mt-10 space-y-3">{projects.map(p=><div key={p.name} className="a2z-card flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between"><div className="flex items-center gap-4"><div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/5 text-zinc-400">{p.type==='Video'?'▶':'✦'}</div><div><h2 className="font-semibold">{p.name}</h2><p className="mt-1 text-sm text-zinc-500">{p.type} · {p.meta}</p></div></div><div className="flex items-center gap-4"><span className={`rounded-full px-3 py-1 text-xs ${p.status==='Ready'?'bg-emerald-400/10 text-emerald-300':'bg-white/5 text-zinc-400'}`}>{p.status}</span><button className="text-sm text-zinc-500 hover:text-white">Open →</button></div></div>)}</div></section></main>}
