@@ -288,7 +288,7 @@ export default function CreateVideo() {
 
             <div className="mt-5 grid gap-4 md:grid-cols-2">
               <div><label className="a2z-label">Footer / CTA text</label><input className="a2z-input" value={footerText} onChange={(e) => setFooterText(e.target.value)} placeholder="Website • phone • CTA • app link"/></div>
-              <div><label className="a2z-label">Reference strength</label><select className="a2z-input" value={referenceStrength} onChange={(e) => setReferenceStrength(e.target.value)}>{["Low", "Medium", "High"].map((x) => <option key={x}>{x}</option>)}</select></div>
+              <div><label className="a2z-label">Reference strength</label><select className="a2z-input" value={referenceStrength} onChange={(e) => setReferenceStrength(e.target.value)}>{["Low", "Medium", "High"].map((x) => <option key={x} value={x}>{x}</option>)}</select></div>
             </div>
 
             <button disabled={busy || !script.trim()} onClick={generate} className="a2z-btn a2z-btn-primary mt-6 w-full disabled:cursor-wait disabled:opacity-50">
@@ -300,12 +300,12 @@ export default function CreateVideo() {
           <aside className="a2z-card p-6">
             <div className="flex items-start gap-4"><Icon name="settings"/><div><p className="text-xs uppercase tracking-[.18em] text-zinc-500">Production setup</p><h2 className="mt-1 text-xl font-semibold">Global settings</h2></div></div>
             <div className="mt-6 space-y-4">
-              <div><label className="a2z-label">Target duration</label><select className="a2z-input" value={duration} onChange={(e) => setDuration(e.target.value)}>{["30", "45", "60", "90", "120", "180"].map((x) => <option key={x}>{x} sec</option>)}</select></div>
-              <div><label className="a2z-label">Aspect ratio</label><select className="a2z-input" value={aspectRatio} onChange={(e) => setAspectRatio(e.target.value)}><option>16:9</option><option>9:16</option><option>1:1</option><option>4:5</option></select></div>
+              <div><label className="a2z-label">Target duration</label><select className="a2z-input" value={duration} onChange={(e) => setDuration(e.target.value)}>{["30", "45", "60", "90", "120", "180"].map((x) => <option key={x} value={x}>{x} sec</option>)}</select></div>
+              <div><label className="a2z-label">Aspect ratio</label><select className="a2z-input" value={aspectRatio} onChange={(e) => setAspectRatio(e.target.value)}><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="1:1">1:1</option><option value="4:5">4:5</option></select></div>
               <div><label className="a2z-label">Visual style</label><input className="a2z-input" value={style} onChange={(e) => setStyle(e.target.value)} placeholder="Cinematic documentary"/></div>
-              <div><label className="a2z-label">Language</label><select className="a2z-input" value={language} onChange={(e) => setLanguage(e.target.value)}>{["Bengali", "English", "Hindi", "Urdu"].map((x) => <option key={x}>{x}</option>)}</select></div>
+              <div><label className="a2z-label">Language</label><select className="a2z-input" value={language} onChange={(e) => setLanguage(e.target.value)}>{["Bengali", "English", "Hindi", "Urdu"].map((x) => <option key={x} value={x}>{x}</option>)}</select></div>
               <div><label className="a2z-label">Voice style</label><input className="a2z-input" value={voiceStyle} onChange={(e) => setVoiceStyle(e.target.value)} /></div>
-              <div><label className="a2z-label">Gemini voice</label><select className="a2z-input" value={voiceName} onChange={(e) => setVoiceName(e.target.value)}>{["Kore", "Puck", "Achernar", "Charon", "Fenrir"].map((x) => <option key={x}>{x}</option>)}</select></div>
+              <div><label className="a2z-label">Gemini voice</label><select className="a2z-input" value={voiceName} onChange={(e) => setVoiceName(e.target.value)}>{["Kore", "Puck", "Achernar", "Charon", "Fenrir"].map((x) => <option key={x} value={x}>{x}</option>)}</select></div>
               <div><label className="a2z-label">Music mood</label><input className="a2z-input" value={musicMood} onChange={(e) => setMusicMood(e.target.value)} /></div>
               <div><label className="a2z-label">Logo placement</label><select className="a2z-input" value={logoPolicy} onChange={(e) => setLogoPolicy(e.target.value)}><option>Outro + key brand moments</option><option>Outro only</option><option>All scenes</option><option>AI decides</option></select></div>
               <div><label className="a2z-label">Footer placement</label><select className="a2z-input" value={footerPolicy} onChange={(e) => setFooterPolicy(e.target.value)}><option>CTA / outro only</option><option>All scenes</option><option>Selected scenes</option><option>AI decides</option></select></div>
